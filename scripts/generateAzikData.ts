@@ -1,26 +1,27 @@
 /**
- * azik_romantable.txt からエントリを読み取り、カテゴリ分類を検証するスクリプト。
+ * azik_romantable.txt から src/data/azikData.ts を生成するスクリプト。
  *
  * 使用方法: npx tsx scripts/generateAzikData.ts
  *
- * 既存の azikData.ts の内容とテキストファイルの内容を比較し、
- * 漏れや不一致がないかチェックする。
- * azikData.ts はハードコードされたデータなので、このスクリプトは
- * 検証用途に使う。
+ * azik_romantable.txt をTSV(タブ区切り)として読み込み、
+ * 各エントリにカテゴリとpriorityを付与して azikData.ts を出力する。
  */
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { AZIK_ENTRIES, ROMAJI_TO_KANA } from '../src/data/azikData'
 import type { Category } from '../src/engine/types'
 
 const ROMANTABLE_PATH = resolve(import.meta.dirname ?? '.', '..', 'azik_romantable.txt')
+const OUTPUT_PATH = resolve(import.meta.dirname ?? '.', '..', 'src', 'data', 'azikData.ts')
 
 // === 分類ルール ===
 
+/** punctuation: 句読点・中黒 */
+const PUNCTUATION_ROMAJI = new Set(['.', ',', 'z/'])
+
 const SYMBOL_ROMAJI = new Set([
-  ';', 'q', 'nn', '-', ':', '~', '.', ',',
-  'z/', 'z.', 'z,', 'z-', 'z[', 'z]', '[', ']',
+  ';', 'q', 'nn', '-', ':', '~',
+  'z.', 'z,', 'z-', 'z[', 'z]', '[', ']',
   'la', 'li', 'lu', 'le', 'lo', 'lya', 'lyu', 'lyo',
 ])
 
@@ -56,6 +57,7 @@ const BASIC_ROMAJI = new Set([
 ])
 
 function classifyEntry(romaji: string, kana: string): Category {
+  if (PUNCTUATION_ROMAJI.has(romaji)) return 'punctuation'
   if (SYMBOL_ROMAJI.has(romaji)) return 'symbol'
   if (COMPOUND_WORD_ROMAJI.has(romaji)) return 'compound_word'
   if (BASIC_ROMAJI.has(romaji)) return 'basic'
@@ -99,59 +101,53 @@ function classifyEntry(romaji: string, kana: string): Category {
 const rawText = readFileSync(ROMANTABLE_PATH, 'utf-8')
 const lines = rawText.split('\n')
 
-const txtEntries: Array<{ romaji: string; kana: string }> = []
+type ParsedEntry = { romaji: string; kana: string; category: Category; priority: number }
+
+const entries: ParsedEntry[] = []
 for (const line of lines) {
   if (!line.includes('\t') || !line.trim()) continue
   const [romaji, kana] = line.split('\t')
   if (romaji && kana) {
-    txtEntries.push({ romaji: romaji.trim(), kana: kana.trim() })
+    const r = romaji.trim()
+    const k = kana.trim()
+    entries.push({
+      romaji: r,
+      kana: k,
+      category: classifyEntry(r, k),
+      priority: r.length,
+    })
   }
 }
 
-console.log(`テキストファイルのエントリ数: ${txtEntries.length}`)
-console.log(`azikData.ts のエントリ数: ${AZIK_ENTRIES.length}`)
+console.log(`パース済みエントリ数: ${entries.length}`)
 
-// 1. テキストファイルにあって azikData.ts にないエントリ
-let missingCount = 0
-for (const entry of txtEntries) {
-  if (!ROMAJI_TO_KANA.has(entry.romaji)) {
-    console.error(`[MISSING] テキストにあるが azikData にない: ${entry.romaji} → ${entry.kana}`)
-    missingCount++
-  } else if (ROMAJI_TO_KANA.get(entry.romaji) !== entry.kana) {
-    console.error(`[MISMATCH] かな不一致: ${entry.romaji} → azikData: ${ROMAJI_TO_KANA.get(entry.romaji)}, txt: ${entry.kana}`)
-    missingCount++
-  }
-}
+// エントリ配列のリテラルを生成
+const entryLines = entries.map(e => {
+  const romajiEscaped = e.romaji.replace(/'/g, "\\'")
+  const kanaEscaped = e.kana.replace(/'/g, "\\'")
+  return `  { romaji: '${romajiEscaped}', kana: '${kanaEscaped}', category: '${e.category}', priority: ${e.priority} },`
+})
 
-// 2. azikData.ts にあってテキストファイルにないエントリ
-const txtRomaji = new Set(txtEntries.map(e => e.romaji))
-let extraCount = 0
+const output = `// このファイルは scripts/generateAzikData.ts で自動生成されたものです。
+// 手動で編集しないでください。
+
+import type { AzikEntry } from '../engine/types'
+
+export const AZIK_ENTRIES: AzikEntry[] = [
+${entryLines.join('\n')}
+]
+
+export const ROMAJI_TO_KANA = new Map<string, string>(
+  AZIK_ENTRIES.map(e => [e.romaji, e.kana])
+)
+
+export const KANA_TO_ENTRIES = new Map<string, AzikEntry[]>()
 for (const entry of AZIK_ENTRIES) {
-  if (!txtRomaji.has(entry.romaji)) {
-    console.error(`[EXTRA] azikData にあるがテキストにない: ${entry.romaji} → ${entry.kana}`)
-    extraCount++
-  }
+  const list = KANA_TO_ENTRIES.get(entry.kana) ?? []
+  list.push(entry)
+  KANA_TO_ENTRIES.set(entry.kana, list)
 }
+`
 
-// 3. カテゴリ分類の検証
-let categoryMismatchCount = 0
-for (const entry of AZIK_ENTRIES) {
-  const expected = classifyEntry(entry.romaji, entry.kana)
-  if (expected !== entry.category) {
-    console.error(`[CATEGORY] ${entry.romaji} → ${entry.kana}: 現在 "${entry.category}", 推定 "${expected}"`)
-    categoryMismatchCount++
-  }
-}
-
-console.log(`\n=== 結果 ===`)
-console.log(`漏れ/不一致: ${missingCount}`)
-console.log(`余分: ${extraCount}`)
-console.log(`カテゴリ不一致: ${categoryMismatchCount}`)
-
-if (missingCount === 0 && extraCount === 0 && categoryMismatchCount === 0) {
-  console.log('\nすべてOK!')
-  process.exit(0)
-} else {
-  console.error('\n問題が見つかった。')
-  process.exit(1)
-}
+writeFileSync(OUTPUT_PATH, output, 'utf-8')
+console.log(`生成完了: ${OUTPUT_PATH}`)
