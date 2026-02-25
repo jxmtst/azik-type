@@ -1,35 +1,40 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useTypingSession } from './hooks/useTypingSession'
+import { HomeScreen } from './components/screens/HomeScreen'
+import { DrillScreen } from './components/screens/DrillScreen'
+import { SentenceScreen } from './components/screens/SentenceScreen'
+import { SessionResult } from './components/ui/SessionResult'
+
+type Screen = 'home' | 'drill' | 'sentence'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const session = useTypingSession()
+  const [screen, setScreen] = useState<Screen>('home')
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  // session.mode === 'result' のとき結果画面を表示
+  if (session.mode === 'result') {
+    return (
+      <SessionResult
+        metrics={session.metrics}
+        kpm={session.kpm}
+        accuracy={session.accuracy}
+        effectiveKpm={session.effectiveKpm}
+        onHome={() => {
+          session.reset()
+          setScreen('home')
+        }}
+      />
+    )
+  }
+
+  switch (screen) {
+    case 'home':
+      return <HomeScreen onSelectMode={(mode) => setScreen(mode)} />
+    case 'drill':
+      return <DrillScreen session={session} />
+    case 'sentence':
+      return <SentenceScreen session={session} />
+  }
 }
 
 export default App

@@ -1,0 +1,310 @@
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --accent: #58a6ff;
+  --error: #f85149;
+  --success: #3fb950;
+  --border: #30363d;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+}
+
+/* ===== Global Utility ===== */
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+button:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===== TypingDisplay ===== */
+
+.typing-display {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.typing-display--drill .typing-display__kana {
+  font-size: 3rem;
+  font-family: var(--font-sans);
+  margin-bottom: 1rem;
+}
+
+.typing-display--sentence .typing-display__kana {
+  font-size: 1.5rem;
+  font-family: var(--font-sans);
+  line-height: 2;
+  letter-spacing: 0.05em;
+}
+
+.typing-display__romaji {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.typing-display__char--done {
+  color: var(--success);
+}
+
+.typing-display__char--current {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--accent);
+}
+
+.typing-display__char--pending {
+  color: var(--text-primary);
+}
+
+@keyframes error-flash {
+  0% { background-color: rgba(248, 81, 73, 0.3); }
+  100% { background-color: transparent; }
+}
+
+.typing-display--error {
+  animation: error-flash 0.3s ease-out;
+}
+
+/* ===== KeyHint ===== */
+
+.key-hint {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.key-hint__label {
+  color: var(--text-secondary);
+  margin-right: 0.5rem;
+}
+
+.key-hint__key {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  margin: 0 0.25rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--accent);
+}
+
+/* ===== CategorySelect ===== */
+
+.category-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.category-select__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: border-color 0.15s;
+}
+
+.category-select__item:hover {
+  border-color: var(--accent);
+}
+
+.category-select__item input[type='checkbox'] {
+  accent-color: var(--accent);
+}
+
+/* ===== SessionResult ===== */
+
+.session-result {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.session-result__title {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
+
+.session-result__metrics {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.session-result__metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.session-result__value {
+  font-size: 2rem;
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+.session-result__label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== HomeScreen ===== */
+
+.home-screen {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.home-screen__title {
+  font-size: 2.5rem;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.home-screen__description {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.home-screen__buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.home-screen__button {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.home-screen__button:hover {
+  background: var(--bg-tertiary);
+}
+
+/* ===== DrillScreen / SentenceScreen ===== */
+
+.drill-screen,
+.sentence-screen {
+  padding: 1rem 0;
+}
+
+.drill-screen__header,
+.sentence-screen__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.drill-screen__progress,
+.sentence-screen__timer {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.drill-screen__stats,
+.sentence-screen__stats {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.drill-screen__stat-value,
+.sentence-screen__stat-value {
+  color: var(--accent);
+  margin-left: 0.25rem;
+}
+
+.drill-screen__hint-toggle,
+.sentence-screen__hint-toggle {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.hint-toggle-button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.hint-toggle-button:hover {
+  color: var(--accent);
+}
+
+/* ===== Start Section (pre-drill) ===== */
+
+.drill-screen__start {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.drill-screen__start-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.drill-screen__start-button {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.drill-screen__start-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
