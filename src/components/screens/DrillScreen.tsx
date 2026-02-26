@@ -27,7 +27,8 @@ export function DrillScreen({ session }: Props) {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [session.mode, session.handleKey])
+    // session.handleKeyは安定したコールバック（useCallback）なので、sessionオブジェクト全体は不要
+  }, [session.mode, session.handleKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 開始前画面
   if (session.mode === 'idle') {

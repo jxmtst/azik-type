@@ -68,6 +68,7 @@ export function useTypingSession(): TypingSessionState {
   const [metrics, setMetrics] = useState<SessionMetrics>({ totalKeystrokes: 0, missCount: 0, elapsedMs: 0 })
   const [remainingMs, setRemainingMs] = useState(0)
   const [lastResult, setLastResult] = useState<MatchResult | null>(null)
+  const [timerStarted, setTimerStarted] = useState(false)
 
   const startTimeRef = useRef<number | null>(null)
   const drillSessionRef = useRef<DrillSession | null>(null)
@@ -77,8 +78,7 @@ export function useTypingSession(): TypingSessionState {
   // 文章モードのタイマー
   useEffect(() => {
     if (mode !== 'sentence') return
-    // タイマーは最初の打鍵後に開始する（startTimeRefがnullの間はまだ開始してない）
-    if (startTimeRef.current === null) return
+    if (!timerStarted) return
 
     const id = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current!
@@ -92,7 +92,7 @@ export function useTypingSession(): TypingSessionState {
     }, 100)
 
     return () => clearInterval(id)
-  }, [mode, startTimeRef.current]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mode, timerStarted])
 
   const startDrill = useCallback((categories: Category[], questionCount = 10) => {
     const session = createDrillSession({ mode: 'drill', categories, questionCount })
@@ -167,6 +167,7 @@ export function useTypingSession(): TypingSessionState {
     // 最初の打鍵でタイマー開始
     if (startTimeRef.current === null) {
       startTimeRef.current = Date.now()
+      setTimerStarted(true)
     }
 
     // feedKeyはstateをmutateするので、コピーを作ってから渡す
@@ -240,6 +241,7 @@ export function useTypingSession(): TypingSessionState {
     setMetrics({ totalKeystrokes: 0, missCount: 0, elapsedMs: 0 })
     setRemainingMs(0)
     setLastResult(null)
+    setTimerStarted(false)
     startTimeRef.current = null
     drillSessionRef.current = null
     sentenceSessionRef.current = null

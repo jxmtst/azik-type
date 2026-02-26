@@ -30,7 +30,7 @@ export function SentenceScreen({ session }: Props) {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [session.mode, session.handleKey])
+  }, [session.mode, session.handleKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const remainingSec = Math.ceil(session.remainingMs / 1000)
 
