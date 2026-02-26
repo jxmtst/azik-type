@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { AZIK_ENTRIES, KANA_TO_ENTRIES, ROMAJI_TO_KANA } from '../../data/azikData'
+import { AZIK_ENTRIES, KANA_TO_ENTRIES, ROMAJI_TO_KANA, getShortestRomaji } from '../../data/azikData'
 
 describe('azikData', () => {
   it('エントリが存在する', () => {
@@ -29,5 +29,23 @@ describe('azikData', () => {
     for (const entry of AZIK_ENTRIES) {
       expect(entry.priority).toBe(entry.romaji.length)
     }
+  })
+
+  it('getShortestRomajiは最短キー列のみ返す', () => {
+    // 「ん」: q(1キー) と nn(2キー) → q のみ
+    const result = getShortestRomaji('ん')
+    expect(result).toContain('q')
+    expect(result).not.toContain('nn')
+  })
+
+  it('getShortestRomajiは同キー数のものは全て返す', () => {
+    // 「さん」: sz(2キー) と sn(2キー)
+    const result = getShortestRomaji('さん')
+    expect(result).toContain('sz')
+    expect(result).toContain('sn')
+  })
+
+  it('getShortestRomajiは存在しないかなで空配列', () => {
+    expect(getShortestRomaji('★')).toEqual([])
   })
 })

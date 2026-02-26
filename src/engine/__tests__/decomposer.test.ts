@@ -17,25 +17,24 @@ describe('decompose', () => {
     expect(dag.edges.length).toBeGreaterThanOrEqual(2)
   })
 
-  it('複合語ショートカットで分岐DAGを構築する', () => {
-    // 「こと」は kt(2キー) でも ko+to(4キー) でも入力可能
+  it('複合語ショートカットで最短パスのみ残る', () => {
+    // 「こと」は kt(2キー) のみ許可。ko+to(4キー)は枝刈り
     const dag = decompose('こと')
     expect(dag.nodeCount).toBe(3) // [0], [1], [2]
-    // ko→[1], to→[2] のパスと kt→[2] のパスがある
     const edgesFrom0 = dag.edgesByNode[0].map(i => dag.edges[i])
-    expect(edgesFrom0.length).toBe(2) // ko と kt
-    const ktEdge = edgesFrom0.find(e => e.kana === 'こと')
-    expect(ktEdge).toBeDefined()
-    expect(ktEdge!.romajiOptions).toContain('kt')
-    expect(ktEdge!.to).toBe(2)
+    expect(edgesFrom0.length).toBe(1) // kt のみ
+    expect(edgesFrom0[0].kana).toBe('こと')
+    expect(edgesFrom0[0].romajiOptions).toContain('kt')
+    expect(edgesFrom0[0].to).toBe(2)
   })
 
-  it('設計書の例: ことがある', () => {
+  it('ことがある: 最短パスのみ残る', () => {
     const dag = decompose('ことがある')
     expect(dag.nodeCount).toBe(6) // 5文字 + 終端
-    // 位置0から「こ」(ko)と「こと」(kt)の2エッジ
+    // 位置0から「こと」(kt)のみ（「こ」(ko)は枝刈り）
     const edgesFrom0 = dag.edgesByNode[0].map(i => dag.edges[i])
-    expect(edgesFrom0.length).toBe(2)
+    expect(edgesFrom0.length).toBe(1)
+    expect(edgesFrom0[0].kana).toBe('こと')
   })
 
   it('非対象文字はスキップエッジになる', () => {
@@ -64,5 +63,33 @@ describe('decompose', () => {
     // ひらがな「か」はそのまま処理
     const dag = decompose('か')
     expect(dag.edges[0].kana).toBe('か')
+  })
+
+  it('同一かなに複数エントリがある場合、最短キー列のみ許可する', () => {
+    // 「ん」: q(1キー) と nn(2キー) → q のみ許可
+    const dag = decompose('ん')
+    const edge = dag.edges[0]
+    expect(edge.kana).toBe('ん')
+    expect(edge.romajiOptions).toContain('q')
+    expect(edge.romajiOptions).not.toContain('nn')
+  })
+
+  it('同キー数のエントリは全て許可する', () => {
+    // 「さん」: sz(2キー) と sn(2キー) → 両方許可
+    const dag = decompose('さん')
+    // 2文字マッチのエッジを探す
+    const sanEdge = dag.edges.find(e => e.kana === 'さん')
+    expect(sanEdge).toBeDefined()
+    expect(sanEdge!.romajiOptions).toContain('sz')
+    expect(sanEdge!.romajiOptions).toContain('sn')
+  })
+
+  it('1文字マッチでも最短フィルタが適用される', () => {
+    // 「か」: ka(2キー) のみ。他に短いエントリがなければそのまま
+    const dag = decompose('か')
+    const edge = dag.edges[0]
+    expect(edge.romajiOptions).toContain('ka')
+    // kaより短いエントリは存在しないので、kaが残る
+    expect(edge.romajiOptions.length).toBeGreaterThanOrEqual(1)
   })
 })

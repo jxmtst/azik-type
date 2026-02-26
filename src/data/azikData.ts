@@ -592,3 +592,11 @@ for (const entry of AZIK_ENTRIES) {
   list.push(entry)
   KANA_TO_ENTRIES.set(entry.kana, list)
 }
+
+/** 指定かなの最短キー列のromajiのみ返す。同キー数は全て含む */
+export function getShortestRomaji(kana: string): string[] {
+  const entries = KANA_TO_ENTRIES.get(kana)
+  if (!entries || entries.length === 0) return []
+  const minLen = Math.min(...entries.map(e => e.romaji.length))
+  return entries.filter(e => e.romaji.length === minLen).map(e => e.romaji)
+}

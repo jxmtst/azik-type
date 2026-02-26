@@ -38,6 +38,13 @@ describe('SentenceSession', () => {
     expect(session.timeLimitMs).toBe(120000)
   })
 
+  it('デフォルトの制限時間は120秒（設計仕様）', () => {
+    // useTypingSession.tsでの呼び出し値が設計書通り120秒であることを確認するため、
+    // ここではsession.tsの変換が正しいことだけ検証
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
+    expect(session.timeLimitMs).toBe(120 * 1000)
+  })
+
   it('getNextQuestionで文章とDAGを取得できる', () => {
     const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
     const q = getNextQuestion(session)

@@ -8,7 +8,7 @@ type Props = {
 }
 
 export function SentenceScreen({ session }: Props) {
-  const [hintVisible, setHintVisible] = useState(false)
+  const [hintVisible, setHintVisible] = useState(true)
 
   // 自動開始
   useEffect(() => {
@@ -33,10 +33,6 @@ export function SentenceScreen({ session }: Props) {
   }, [session.mode, session.handleKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const remainingSec = Math.ceil(session.remainingMs / 1000)
-
-  // 現在のかな文字列の先頭文字をヒントに使う
-  const currentChars = [...session.currentKana]
-  const hintKana = currentChars.length > 0 ? currentChars[0] : ''
 
   return (
     <div className="sentence-screen">
@@ -77,7 +73,9 @@ export function SentenceScreen({ session }: Props) {
         </button>
       </div>
 
-      <KeyHint kana={hintKana} visible={hintVisible} />
+      {session.currentDag && (
+        <KeyHint dag={session.currentDag} visible={hintVisible} />
+      )}
     </div>
   )
 }

@@ -72,6 +72,7 @@ export function createMatcher(dag: InputDag): MatcherState {
 }
 
 export function feedKey(state: MatcherState, dag: InputDag, key: string): MatchResult {
+  const normalizedKey = key.toLowerCase()
   // totalKeystrokesは判定前にインクリメント
   state.totalKeystrokes++
 
@@ -84,7 +85,7 @@ export function feedKey(state: MatcherState, dag: InputDag, key: string): MatchR
     const edge = dag.edges[cursor.edgeIndex]
     // このエッジのromajiOptionsの中でcursor.offsetの位置がkeyと一致するものがあるか
     for (const romaji of edge.romajiOptions) {
-      if (cursor.offset < romaji.length && romaji[cursor.offset] === key) {
+      if (cursor.offset < romaji.length && romaji[cursor.offset] === normalizedKey) {
         const newOffset = cursor.offset + 1
         if (newOffset >= romaji.length) {
           // このromajiオプションを完走 → 次のノードへ遷移
@@ -125,4 +126,10 @@ export function feedKey(state: MatcherState, dag: InputDag, key: string): MatchR
 
   state.cursors = nextCursors
   return 'progress'
+}
+
+/** カーソル群から現在入力中のかな位置（最小ノードID）を返す */
+export function getCurrentKanaPosition(state: MatcherState): number {
+  if (state.cursors.length === 0) return 0
+  return Math.min(...state.cursors.map(c => c.nodeId))
 }

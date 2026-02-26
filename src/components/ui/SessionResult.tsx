@@ -6,9 +6,10 @@ type Props = {
   accuracy: number | null
   effectiveKpm: number | null
   onHome: () => void
+  onRestart: () => void
 }
 
-export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onHome }: Props) {
+export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onHome, onRestart }: Props) {
   const hasKeystrokes = metrics.totalKeystrokes > 0
 
   return (
@@ -34,9 +35,14 @@ export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onHome }: 
           <span className="session-result__label">Effective KPM</span>
         </div>
       </div>
-      <button onClick={onHome}>
-        ホームに戻る
-      </button>
+      <div className="session-result__actions">
+        <button onClick={onRestart}>
+          もう一度
+        </button>
+        <button onClick={onHome}>
+          ホームに戻る
+        </button>
+      </div>
     </div>
   )
 }

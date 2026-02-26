@@ -1,26 +1,32 @@
 import { useMemo } from 'react'
-import { KANA_TO_ENTRIES } from '../../data/azikData'
+import type { InputDag } from '../../engine/types'
+import { getShortestRomaji } from '../../data/azikData'
+import { buildShortestHint } from '../../engine/hintBuilder'
 
 type Props = {
-  kana: string
   visible: boolean
-}
+} & (
+  | { kana: string; dag?: undefined }
+  | { dag: InputDag; kana?: undefined }
+)
 
-export function KeyHint({ kana, visible }: Props) {
-  const hints = useMemo(() => {
-    const entries = KANA_TO_ENTRIES.get(kana)
-    if (!entries || entries.length === 0) return []
-    return entries.map(e => e.romaji)
-  }, [kana])
+export function KeyHint(props: Props) {
+  const hint = useMemo(() => {
+    if (props.dag) {
+      return buildShortestHint(props.dag)
+    }
+    if (props.kana) {
+      return getShortestRomaji(props.kana).join(' / ')
+    }
+    return ''
+  }, [props.dag, props.kana])
 
-  if (!visible || hints.length === 0) return null
+  if (!props.visible || !hint) return null
 
   return (
     <div className="key-hint">
       <span className="key-hint__label">HINT:</span>
-      {hints.map((h, i) => (
-        <span key={i} className="key-hint__key">{h}</span>
-      ))}
+      <span className="key-hint__key">{hint}</span>
     </div>
   )
 }

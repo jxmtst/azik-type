@@ -4,6 +4,7 @@ import type { InputDag, MatcherState, MatchResult, Category, SessionMetrics, Azi
 import type { DrillSession, SentenceSession } from '../engine/session.ts'
 import { createDrillSession, createSentenceSession, getNextQuestion } from '../engine/session.ts'
 import { createMatcher, feedKey } from '../engine/inputMatcher.ts'
+import { createMetricsAccumulator } from '../engine/sessionMetrics.ts'
 
 type Mode = 'idle' | 'drill' | 'sentence' | 'result'
 
@@ -74,6 +75,7 @@ export function useTypingSession(): TypingSessionState {
   const drillSessionRef = useRef<DrillSession | null>(null)
   const sentenceSessionRef = useRef<SentenceSession | null>(null)
   const timeLimitMsRef = useRef(0)
+  const accumulatorRef = useRef(createMetricsAccumulator())
 
   // 文章モードのタイマー
   useEffect(() => {
@@ -99,6 +101,7 @@ export function useTypingSession(): TypingSessionState {
     drillSessionRef.current = session
     sentenceSessionRef.current = null
     startTimeRef.current = null
+    accumulatorRef.current.reset()
 
     if (session.questions.length === 0) {
       setMode('result')
@@ -129,10 +132,11 @@ export function useTypingSession(): TypingSessionState {
   }, [])
 
   const startSentence = useCallback(() => {
-    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 60 })
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
     sentenceSessionRef.current = session
     drillSessionRef.current = null
     startTimeRef.current = null
+    accumulatorRef.current.reset()
     timeLimitMsRef.current = session.timeLimitMs
 
     const question = getNextQuestion(session)
@@ -190,14 +194,14 @@ export function useTypingSession(): TypingSessionState {
     setMatcherState(newMatcherState)
     setLastResult(result)
 
-    const newMetrics: SessionMetrics = {
-      totalKeystrokes: newMatcherState.totalKeystrokes,
-      missCount: newMatcherState.missCount,
-      elapsedMs,
-    }
-    setMetrics(newMetrics)
+    const acc = accumulatorRef.current
+    acc.update({ totalKeystrokes: newMatcherState.totalKeystrokes, missCount: newMatcherState.missCount }, elapsedMs)
+    setMetrics(acc.current())
 
     if (result === 'complete') {
+      acc.commit()
+      setMetrics(acc.current())
+
       if (mode === 'drill') {
         const session = drillSessionRef.current!
         const nextIndex = questionIndex + 1

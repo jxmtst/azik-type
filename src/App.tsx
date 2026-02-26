@@ -19,6 +19,15 @@ function App() {
         kpm={session.kpm}
         accuracy={session.accuracy}
         effectiveKpm={session.effectiveKpm}
+        onRestart={() => {
+          if (screen === 'sentence') {
+            session.startSentence()
+          }
+          // drillは画面に戻ればカテゴリ選択からやり直せる
+          if (screen === 'drill') {
+            session.reset()
+          }
+        }}
         onHome={() => {
           session.reset()
           setScreen('home')

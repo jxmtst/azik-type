@@ -1,6 +1,7 @@
 // src/engine/decomposer.ts
 import type { InputDag, DagEdge } from './types'
-import { KANA_TO_ENTRIES } from '../data/azikData'
+import { KANA_TO_ENTRIES, getShortestRomaji } from '../data/azikData'
+import { pruneToShortest } from './dagShortest'
 
 /** 入力対象文字かどうか判定 */
 function isTargetChar(ch: string): boolean {
@@ -31,7 +32,7 @@ export function decompose(input: string): InputDag {
     // 1文字マッチ
     const entries1 = KANA_TO_ENTRIES.get(chars[i])
     if (entries1 && entries1.length > 0) {
-      const romajiOptions = entries1.map(e => e.romaji)
+      const romajiOptions = getShortestRomaji(chars[i])
       const idx = edges.length
       edges.push({ from: i, to: i + 1, romajiOptions, kana: chars[i], isSkip: false })
       edgesByNode[i].push(idx)
@@ -42,7 +43,7 @@ export function decompose(input: string): InputDag {
       const substr = chars.slice(i, i + len).join('')
       const entries = KANA_TO_ENTRIES.get(substr)
       if (entries && entries.length > 0) {
-        const romajiOptions = entries.map(e => e.romaji)
+        const romajiOptions = getShortestRomaji(substr)
         const idx = edges.length
         edges.push({ from: i, to: i + len, romajiOptions, kana: substr, isSkip: false })
         edgesByNode[i].push(idx)
@@ -50,5 +51,5 @@ export function decompose(input: string): InputDag {
     }
   }
 
-  return { nodeCount, edges, edgesByNode }
+  return pruneToShortest({ nodeCount, edges, edgesByNode })
 }

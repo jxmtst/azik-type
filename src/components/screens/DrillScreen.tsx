@@ -11,7 +11,7 @@ type Props = {
 
 export function DrillScreen({ session }: Props) {
   const [categories, setCategories] = useState<Category[]>(['basic'])
-  const [hintVisible, setHintVisible] = useState(false)
+  const [hintVisible, setHintVisible] = useState(true)
 
   // keydownイベントのハンドリング
   useEffect(() => {
