@@ -37,7 +37,7 @@ function App() {
     return (
       <>
         <AppHeader currentScreen={screen} onNavigate={handleNavigate} />
-        <main className="app-main">
+        <main className="p-8">
           <SessionResult
             metrics={session.metrics}
             kpm={session.kpm}
@@ -71,7 +71,7 @@ function App() {
   return (
     <>
       <AppHeader currentScreen={screen} onNavigate={handleNavigate} />
-      <main className="app-main">
+      <main className="p-8">
         {content}
       </main>
     </>

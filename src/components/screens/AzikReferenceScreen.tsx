@@ -29,22 +29,20 @@ export function AzikReferenceScreen() {
   }
 
   return (
-    <div className="azik-ref">
-      <div className="azik-ref__header">
-        <h2 className="azik-ref__title">AZIKキーマップ</h2>
-      </div>
-      <div className="azik-ref__tables">
+    <div className="p-4 space-y-3">
+      <h2 className="text-xl">AZIKキーマップ</h2>
+      <div className="grid grid-cols-2 gap-y-2 gap-x-6">
         {CATEGORY_ORDER.map(cat => {
           const entries = grouped.get(cat)!
           if (entries.length === 0) return null
           return (
-            <div key={cat} className="azik-ref__category">
-              <h3 className="azik-ref__category-title">{CATEGORY_LABELS[cat]}</h3>
-              <div className="azik-ref__grid">
+            <div key={cat} className="space-y-1.5">
+              <h3 className="text-[0.85rem] text-accent border-b border-border pb-1">{CATEGORY_LABELS[cat]}</h3>
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(5rem,1fr))] gap-1">
                 {entries.map((e, i) => (
-                  <div key={i} className="azik-ref__entry">
-                    <span className="azik-ref__romaji">{e.romaji}</span>
-                    <span className="azik-ref__kana">{e.kana}</span>
+                  <div key={i} className="flex items-center gap-1 px-1.5 py-0.5 bg-bg-secondary rounded text-xs">
+                    <span className="font-mono text-accent min-w-8">{e.romaji}</span>
+                    <span className="text-text-primary">{e.kana}</span>
                   </div>
                 ))}
               </div>

@@ -26,29 +26,29 @@ export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onRestart 
   const hasKeystrokes = metrics.totalKeystrokes > 0
 
   return (
-    <div className="session-result">
-      <h2 className="session-result__title">Result</h2>
-      <div className="session-result__metrics">
-        <div className="session-result__metric">
-          <span className="session-result__value">
+    <div className="text-center py-12 px-4 space-y-8">
+      <h2 className="text-2xl text-text-primary">Result</h2>
+      <div className="flex justify-center gap-8">
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[2rem] font-mono text-accent">
             {hasKeystrokes ? Math.round(kpm) : 0}
           </span>
-          <span className="session-result__label">KPM</span>
+          <span className="text-xs text-text-secondary uppercase tracking-[0.05em]">KPM</span>
         </div>
-        <div className="session-result__metric">
-          <span className="session-result__value">
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[2rem] font-mono text-accent">
             {accuracy !== null ? `${accuracy.toFixed(1)}%` : '--'}
           </span>
-          <span className="session-result__label">Accuracy</span>
+          <span className="text-xs text-text-secondary uppercase tracking-[0.05em]">Accuracy</span>
         </div>
-        <div className="session-result__metric">
-          <span className="session-result__value">
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[2rem] font-mono text-accent">
             {effectiveKpm !== null ? Math.round(effectiveKpm) : '--'}
           </span>
-          <span className="session-result__label">Effective KPM</span>
+          <span className="text-xs text-text-secondary uppercase tracking-[0.05em]">Effective KPM</span>
         </div>
       </div>
-      <div className="session-result__actions">
+      <div className="flex justify-center gap-4">
         <button onClick={onRestart}>
           もう一度
         </button>

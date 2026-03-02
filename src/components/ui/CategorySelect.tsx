@@ -24,11 +24,12 @@ export function CategorySelect({ selected, onChange }: Props) {
   }
 
   return (
-    <div className="category-select">
+    <div className="flex flex-wrap gap-3 my-6">
       {CATEGORY_LABELS.map(({ key, label }) => (
-        <label key={key} className="category-select__item">
+        <label key={key} className="flex items-center gap-2 px-3 py-2 bg-bg-secondary border border-border rounded-md cursor-pointer text-sm text-text-primary transition-[border-color] duration-150 hover:border-accent">
           <input
             type="checkbox"
+            className="accent-accent"
             checked={selected.includes(key)}
             onChange={() => toggle(key)}
           />

@@ -48,12 +48,12 @@ export function DrillScreen({ session }: Props) {
   // 開始前画面
   if (session.mode === 'idle') {
     return (
-      <div className="drill-screen">
-        <div className="drill-screen__start">
-          <h2 className="drill-screen__start-title">カテゴリを選択</h2>
+      <div className="max-w-[960px] mx-auto py-4 space-y-4">
+        <div className="text-center py-8 space-y-4">
+          <h2 className="text-xl text-text-primary">カテゴリを選択</h2>
           <CategorySelect selected={categories} onChange={setCategories} />
           <button
-            className="drill-screen__start-button"
+            className="px-8 py-3 text-base bg-bg-secondary border-accent text-accent disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={categories.length === 0}
             onClick={() => session.startDrill(categories)}
           >
@@ -66,21 +66,21 @@ export function DrillScreen({ session }: Props) {
 
   // 練習中画面
   return (
-    <div className="drill-screen">
-      <div className="drill-screen__header">
-        <span className="drill-screen__progress">
+    <div className="max-w-[960px] mx-auto py-4 space-y-4">
+      <div className="flex justify-between items-center pb-3 border-b border-border">
+        <span className="font-mono text-sm text-text-secondary">
           {session.questionIndex + 1} / {session.totalQuestions}
         </span>
-        <div className="drill-screen__stats">
+        <div className="flex gap-6 font-mono text-sm text-text-secondary">
           <span>
             KPM:
-            <span className="drill-screen__stat-value">
+            <span className="text-accent ml-1">
               {Math.round(session.kpm)}
             </span>
           </span>
           <span>
             正確率:
-            <span className="drill-screen__stat-value">
+            <span className="text-accent ml-1">
               {session.accuracy !== null ? `${session.accuracy.toFixed(1)}%` : '--'}
             </span>
           </span>
@@ -95,18 +95,18 @@ export function DrillScreen({ session }: Props) {
         mode="drill"
       />
 
-      <div className="drill-screen__hint-toggle">
+      {session.currentEntry && (
+        <KeyHint kana={session.currentEntry.kana} visible={hintVisible} />
+      )}
+
+      <div className="text-center">
         <button
-          className="hint-toggle-button"
+          className="bg-transparent border-0 text-text-secondary text-xs cursor-pointer px-2 py-1 hover:text-accent hover:bg-transparent"
           onClick={() => setHintVisible(v => !v)}
         >
           {hintVisible ? 'ヒントを隠す' : 'ヒントを表示'}
         </button>
       </div>
-
-      {session.currentEntry && (
-        <KeyHint kana={session.currentEntry.kana} visible={hintVisible} />
-      )}
     </div>
   )
 }

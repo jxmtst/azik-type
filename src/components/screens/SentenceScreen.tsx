@@ -35,21 +35,21 @@ export function SentenceScreen({ session }: Props) {
   const remainingSec = Math.ceil(session.remainingMs / 1000)
 
   return (
-    <div className="sentence-screen">
-      <div className="sentence-screen__header">
-        <span className="sentence-screen__timer">
+    <div className="max-w-[960px] mx-auto py-4 space-y-4">
+      <div className="flex justify-between items-center pb-3 border-b border-border">
+        <span className="font-mono text-sm text-text-secondary">
           残り: {remainingSec}秒
         </span>
-        <div className="sentence-screen__stats">
+        <div className="flex gap-6 font-mono text-sm text-text-secondary">
           <span>
             KPM:
-            <span className="sentence-screen__stat-value">
+            <span className="text-accent ml-1">
               {Math.round(session.kpm)}
             </span>
           </span>
           <span>
             正確率:
-            <span className="sentence-screen__stat-value">
+            <span className="text-accent ml-1">
               {session.accuracy !== null ? `${session.accuracy.toFixed(1)}%` : '--'}
             </span>
           </span>
@@ -64,18 +64,18 @@ export function SentenceScreen({ session }: Props) {
         mode="sentence"
       />
 
-      <div className="sentence-screen__hint-toggle">
+      {session.currentDag && (
+        <KeyHint dag={session.currentDag} visible={hintVisible} />
+      )}
+
+      <div className="text-center">
         <button
-          className="hint-toggle-button"
+          className="bg-transparent border-0 text-text-secondary text-xs cursor-pointer px-2 py-1 hover:text-accent hover:bg-transparent"
           onClick={() => setHintVisible(v => !v)}
         >
           {hintVisible ? 'ヒントを隠す' : 'ヒントを表示'}
         </button>
       </div>
-
-      {session.currentDag && (
-        <KeyHint dag={session.currentDag} visible={hintVisible} />
-      )}
     </div>
   )
 }

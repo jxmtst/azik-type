@@ -24,9 +24,9 @@ export function KeyHint(props: Props) {
   if (!props.visible || !hint) return null
 
   return (
-    <div className="key-hint">
-      <span className="key-hint__label">HINT:</span>
-      <span className="key-hint__key">{hint}</span>
+    <div className="my-4 px-4 py-3 bg-bg-secondary border border-border rounded-md font-mono text-sm text-text-secondary text-center">
+      <span className="text-text-secondary mr-2">HINT:</span>
+      <span className="inline-block px-2 py-0.5 mx-1 bg-bg-tertiary border border-border rounded text-accent">{hint}</span>
     </div>
   )
 }

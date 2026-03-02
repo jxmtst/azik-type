@@ -74,14 +74,14 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
 
   const chars = useMemo(() => [...targetKana], [targetKana])
 
-  const errorClass = lastResult === 'error' ? ' typing-display--error' : ''
+  const errorClass = lastResult === 'error' ? ' animate-error-flash' : ''
 
   if (mode === 'drill') {
     return (
-      <div className={`typing-display typing-display--drill${errorClass}`}>
-        <div className="typing-display__kana">{targetKana}</div>
+      <div className={`my-8 text-center space-y-4${errorClass}`}>
+        <div className="font-sans text-[3rem]">{targetKana}</div>
         {currentRomaji && (
-          <div className="typing-display__romaji">{currentRomaji}</div>
+          <div className="font-mono text-xl text-text-secondary">{currentRomaji}</div>
         )}
       </div>
     )
@@ -89,14 +89,14 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
 
   // sentence mode
   return (
-    <div className={`typing-display typing-display--sentence${errorClass}`}>
-      <div className="typing-display__kana">
+    <div className={`my-8 text-center space-y-2${errorClass}`}>
+      <div className="font-sans text-2xl leading-[2] tracking-[0.05em]">
         {chars.map((ch, i) => {
-          let cls = 'typing-display__char--pending'
+          let cls = 'text-text-primary'
           if (i < completedChars) {
-            cls = 'typing-display__char--done'
+            cls = 'text-success'
           } else if (i === completedChars) {
-            cls = 'typing-display__char--current'
+            cls = 'underline underline-offset-4 decoration-accent'
           }
           return (
             <span key={i} className={cls}>
@@ -106,7 +106,7 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
         })}
       </div>
       {currentRomaji && (
-        <div className="typing-display__romaji">{currentRomaji}</div>
+        <div className="font-mono text-xl text-text-secondary">{currentRomaji}</div>
       )}
     </div>
   )
