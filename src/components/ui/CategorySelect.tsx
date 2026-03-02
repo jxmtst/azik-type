@@ -6,14 +6,12 @@ type Props = {
 }
 
 const CATEGORY_LABELS: { key: Category; label: string }[] = [
-  { key: 'basic', label: '基本' },
   { key: 'dakuten', label: '濁音・半濁音' },
   { key: 'youon', label: '拗音' },
   { key: 'hatsuon_shortcut', label: '撥音ショートカット' },
   { key: 'double_vowel', label: '二重母音' },
   { key: 'compound_word', label: '複合語' },
   { key: 'symbol', label: '記号' },
-  { key: 'punctuation', label: '句読点' },
 ]
 
 export function CategorySelect({ selected, onChange }: Props) {

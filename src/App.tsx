@@ -1,49 +1,81 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTypingSession } from './hooks/useTypingSession'
-import { HomeScreen } from './components/screens/HomeScreen'
+import { AppHeader } from './components/layout/AppHeader'
 import { DrillScreen } from './components/screens/DrillScreen'
 import { SentenceScreen } from './components/screens/SentenceScreen'
+import { AzikReferenceScreen } from './components/screens/AzikReferenceScreen'
 import { SessionResult } from './components/ui/SessionResult'
 
-type Screen = 'home' | 'drill' | 'sentence'
+type Screen = 'drill' | 'sentence' | 'reference'
 
 function App() {
   const session = useTypingSession()
-  const [screen, setScreen] = useState<Screen>('home')
+  const [screen, setScreen] = useState<Screen>('drill')
+
+  // ESCキーで戻る（idle以外のとき）
+  useEffect(() => {
+    if (session.mode === 'idle') return
+
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        session.reset()
+      }
+    }
+
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [session.mode, session.reset])
+
+  const handleNavigate = (next: Screen) => {
+    session.reset()
+    setScreen(next)
+  }
 
   // session.mode === 'result' のとき結果画面を表示
   if (session.mode === 'result') {
     return (
-      <SessionResult
-        metrics={session.metrics}
-        kpm={session.kpm}
-        accuracy={session.accuracy}
-        effectiveKpm={session.effectiveKpm}
-        onRestart={() => {
-          if (screen === 'sentence') {
-            session.startSentence()
-          }
-          // drillは画面に戻ればカテゴリ選択からやり直せる
-          if (screen === 'drill') {
-            session.reset()
-          }
-        }}
-        onHome={() => {
-          session.reset()
-          setScreen('home')
-        }}
-      />
+      <>
+        <AppHeader currentScreen={screen} onNavigate={handleNavigate} />
+        <main className="app-main">
+          <SessionResult
+            metrics={session.metrics}
+            kpm={session.kpm}
+            accuracy={session.accuracy}
+            effectiveKpm={session.effectiveKpm}
+            onRestart={() => {
+              if (screen === 'sentence') {
+                session.startSentence()
+              }
+              if (screen === 'drill') {
+                session.reset()
+              }
+            }}
+          />
+        </main>
+      </>
     )
   }
 
-  switch (screen) {
-    case 'home':
-      return <HomeScreen onSelectMode={(mode) => setScreen(mode)} />
-    case 'drill':
-      return <DrillScreen session={session} />
-    case 'sentence':
-      return <SentenceScreen session={session} />
-  }
+  const content = (() => {
+    switch (screen) {
+      case 'drill':
+        return <DrillScreen session={session} />
+      case 'sentence':
+        return <SentenceScreen session={session} />
+      case 'reference':
+        return <AzikReferenceScreen />
+    }
+  })()
+
+  return (
+    <>
+      <AppHeader currentScreen={screen} onNavigate={handleNavigate} />
+      <main className="app-main">
+        {content}
+      </main>
+    </>
+  )
 }
 
 export default App

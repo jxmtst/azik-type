@@ -5,17 +5,21 @@ import { pruneToShortest } from './dagShortest'
 
 /** 入力対象文字かどうか判定 */
 function isTargetChar(ch: string): boolean {
-  // ひらがな U+3040-U+309F
-  const code = ch.charCodeAt(0)
-  if (code >= 0x3040 && code <= 0x309F) return true
-  // 句読点・記号
-  if ('、。・ー'.includes(ch)) return true
-  return false
+  return KANA_TO_ENTRIES.has(ch)
 }
 
+/** NFKC正規化で分解されてしまう記号（…→..., ‥→..） */
+const NFKC_PRESERVE = new Set(['…', '‥'])
+
 export function decompose(input: string): InputDag {
-  const normalized = input.normalize('NFKC')
-  const chars = [...normalized]
+  const chars: string[] = []
+  for (const ch of input) {
+    if (NFKC_PRESERVE.has(ch)) {
+      chars.push(ch)
+    } else {
+      chars.push(...[...ch.normalize('NFKC')])
+    }
+  }
   const nodeCount = chars.length + 1
   const edges: DagEdge[] = []
   const edgesByNode: number[][] = Array.from({ length: nodeCount }, () => [])

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import type { SessionMetrics } from '../../engine/types'
 
 type Props = {
@@ -5,11 +6,23 @@ type Props = {
   kpm: number
   accuracy: number | null
   effectiveKpm: number | null
-  onHome: () => void
   onRestart: () => void
 }
 
-export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onHome, onRestart }: Props) {
+export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onRestart }: Props) {
+  // Spaceキーでもう一度
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === ' ') {
+        e.preventDefault()
+        onRestart()
+      }
+    }
+
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onRestart])
+
   const hasKeystrokes = metrics.totalKeystrokes > 0
 
   return (
@@ -38,9 +51,6 @@ export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onHome, on
       <div className="session-result__actions">
         <button onClick={onRestart}>
           もう一度
-        </button>
-        <button onClick={onHome}>
-          ホームに戻る
         </button>
       </div>
     </div>

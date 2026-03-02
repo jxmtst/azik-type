@@ -84,6 +84,20 @@ describe('decompose', () => {
     expect(sanEdge!.romajiOptions).toContain('sn')
   })
 
+  it('AZIK記号（z.→…, z]→』等）は入力対象', () => {
+    const dag = decompose('…')
+    const edge = dag.edges.find(e => e.kana === '…')
+    expect(edge).toBeDefined()
+    expect(edge!.isSkip).toBe(false)
+    expect(edge!.romajiOptions).toContain('z.')
+
+    const dag2 = decompose('』')
+    const edge2 = dag2.edges.find(e => e.kana === '』')
+    expect(edge2).toBeDefined()
+    expect(edge2!.isSkip).toBe(false)
+    expect(edge2!.romajiOptions).toContain('z]')
+  })
+
   it('1文字マッチでも最短フィルタが適用される', () => {
     // 「か」: ka(2キー) のみ。他に短いエントリがなければそのまま
     const dag = decompose('か')

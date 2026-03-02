@@ -10,7 +10,7 @@ type Props = {
 }
 
 export function DrillScreen({ session }: Props) {
-  const [categories, setCategories] = useState<Category[]>(['basic'])
+  const [categories, setCategories] = useState<Category[]>(['youon'])
   const [hintVisible, setHintVisible] = useState(true)
 
   // keydownイベントのハンドリング
@@ -29,6 +29,21 @@ export function DrillScreen({ session }: Props) {
     return () => window.removeEventListener('keydown', handler)
     // session.handleKeyは安定したコールバック（useCallback）なので、sessionオブジェクト全体は不要
   }, [session.mode, session.handleKey]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // idle時のSpaceキーで開始
+  useEffect(() => {
+    if (session.mode !== 'idle') return
+
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === ' ' && categories.length > 0) {
+        e.preventDefault()
+        session.startDrill(categories)
+      }
+    }
+
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [session.mode, categories, session.startDrill]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 開始前画面
   if (session.mode === 'idle') {
