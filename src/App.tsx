@@ -7,6 +7,7 @@ import { AzikReferenceScreen } from './components/screens/AzikReferenceScreen'
 import { SessionResult } from './components/ui/SessionResult'
 
 type Screen = 'drill' | 'sentence' | 'reference'
+const screens: Screen[] = ['drill', 'sentence', 'reference']
 
 function App() {
   const session = useTypingSession()
@@ -14,7 +15,7 @@ function App() {
 
   // ESCキーで戻る（idle以外のとき）
   useEffect(() => {
-    if (session.mode === 'idle') return
+    if (session.mode === 'idle' || session.mode === 'sentence') return
 
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -26,6 +27,23 @@ function App() {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [session.mode, session.reset])
+
+  // Shift+Tabで画面タブを切り替える
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Tab' && e.shiftKey) {
+        e.preventDefault()
+        setScreen(prev => {
+          const next = screens[(screens.indexOf(prev) + 1) % screens.length]
+          session.reset()
+          return next
+        })
+      }
+    }
+
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [session.reset])
 
   const handleNavigate = (next: Screen) => {
     session.reset()

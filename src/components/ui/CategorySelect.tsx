@@ -24,7 +24,7 @@ export function CategorySelect({ selected, onChange }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap gap-3 my-6">
+    <div className="flex flex-wrap justify-center gap-3 my-6">
       {CATEGORY_LABELS.map(({ key, label }) => (
         <label key={key} className="flex items-center gap-2 px-3 py-2 bg-bg-secondary border border-border rounded-md cursor-pointer text-sm text-text-primary transition-[border-color] duration-150 hover:border-accent">
           <input

@@ -53,15 +53,15 @@ describe('SentenceSession', () => {
     expect(q!.dag.nodeCount).toBeGreaterThan(1)
   })
 
-  it('全文消化するとnullを返す', () => {
+  it('一巡後も再シャッフルして問題を返し続ける', () => {
     const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
-    // 全文取得
-    let count = 0
-    while (getNextQuestion(session) !== null) {
-      count++
-      if (count > 100) break // 安全弁
+    const total = session.shuffled.length
+    // 一巡分取得
+    for (let i = 0; i < total; i++) {
+      expect(getNextQuestion(session)).not.toBeNull()
     }
-    expect(count).toBeGreaterThan(0)
-    expect(getNextQuestion(session)).toBeNull()
+    // 一巡後も問題が返る（再シャッフル）
+    expect(getNextQuestion(session)).not.toBeNull()
+    expect(session.sentenceIndex).toBe(1)
   })
 })

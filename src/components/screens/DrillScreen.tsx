@@ -10,7 +10,7 @@ type Props = {
 }
 
 export function DrillScreen({ session }: Props) {
-  const [categories, setCategories] = useState<Category[]>(['youon'])
+  const [categories, setCategories] = useState<Category[]>([])
   const [hintVisible, setHintVisible] = useState(true)
 
   // keydownイベントのハンドリング

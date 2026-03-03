@@ -136,6 +136,7 @@ export function useTypingSession(): TypingSessionState {
     sentenceSessionRef.current = session
     drillSessionRef.current = null
     startTimeRef.current = null
+    setTimerStarted(false)
     accumulatorRef.current.reset()
     timeLimitMsRef.current = session.timeLimitMs
 

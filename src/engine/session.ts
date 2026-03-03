@@ -21,6 +21,7 @@ export type SentenceQuestion = {
 
 export type SentenceSession = {
   timeLimitMs: number
+  shuffled: string[]
   sentenceIndex: number
   currentQuestion: SentenceQuestion | null
 }
@@ -55,14 +56,19 @@ export function createDrillSession(config: DrillConfig): DrillSession {
 export function createSentenceSession(config: SentenceConfig): SentenceSession {
   return {
     timeLimitMs: config.timeLimitSec * 1000,
+    shuffled: shuffle(SENTENCES),
     sentenceIndex: 0,
     currentQuestion: null,
   }
 }
 
 export function getNextQuestion(session: SentenceSession): SentenceQuestion | null {
-  if (session.sentenceIndex >= SENTENCES.length) return null
-  const text = SENTENCES[session.sentenceIndex]
+  if (session.sentenceIndex >= session.shuffled.length) {
+    // 一巡したら再シャッフル
+    session.shuffled = shuffle(SENTENCES)
+    session.sentenceIndex = 0
+  }
+  const text = session.shuffled[session.sentenceIndex]
   session.sentenceIndex++
   const question: SentenceQuestion = { text, dag: decompose(text) }
   session.currentQuestion = question
