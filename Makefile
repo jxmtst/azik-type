@@ -1,7 +1,11 @@
 .PHONY: dev build preview lint test typecheck ci clean
 
-dev: ## 開発サーバー起動
+dev: node_modules ## 開発サーバー起動
 	npx vite
+
+node_modules: package.json package-lock.json
+	npm install
+	@touch node_modules
 
 build: ## プロダクションビルド
 	npx tsc -b && npx vite build
