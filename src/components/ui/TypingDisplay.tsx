@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { InputDag, MatcherState, MatchResult } from '../../engine/types'
+import { KANA_TO_ENTRIES } from '../../data/azikData'
 
 type Props = {
   targetKana: string
@@ -61,6 +62,30 @@ function computeCurrentRomaji(matcherState: MatcherState | null, dag: InputDag |
   return edge.romajiOptions[0].slice(0, bestOffset)
 }
 
+const EXTENSION_CATEGORIES = new Set(['hatsuon_shortcut', 'double_vowel', 'compound_word'])
+const SHORTCUT_SINGLE_KANA = new Set(['っ', 'ん'])
+
+export function computeExtensionChars(dag: InputDag | null): Set<number> {
+  if (!dag) return new Set()
+  const result = new Set<number>()
+  for (const edge of dag.edges) {
+    if (edge.isSkip) continue
+    const span = edge.to - edge.from
+    if (span >= 2) {
+      const entries = KANA_TO_ENTRIES.get(edge.kana)
+      if (!entries) continue
+      if (entries.some(e => EXTENSION_CATEGORIES.has(e.category))) {
+        for (let i = edge.from; i < edge.to; i++) {
+          result.add(i)
+        }
+      }
+    } else if (span === 1 && SHORTCUT_SINGLE_KANA.has(edge.kana)) {
+      result.add(edge.from)
+    }
+  }
+  return result
+}
+
 export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode }: Props) {
   const completedChars = useMemo(
     () => computeCompletedChars(matcherState, dag),
@@ -73,6 +98,11 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
   )
 
   const chars = useMemo(() => [...targetKana], [targetKana])
+
+  const extensionChars = useMemo(
+    () => computeExtensionChars(dag),
+    [dag],
+  )
 
   const errorClass = lastResult === 'error' ? ' animate-error-flash' : ''
 
@@ -96,7 +126,10 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
           if (i < completedChars) {
             cls = 'text-success'
           } else if (i === completedChars) {
-            cls = 'underline underline-offset-4 decoration-accent'
+            const base = extensionChars.has(i) ? 'text-azik-extension' : ''
+            cls = `${base} underline underline-offset-4 decoration-accent`
+          } else if (extensionChars.has(i)) {
+            cls = 'text-azik-extension'
           }
           return (
             <span key={i} className={cls}>

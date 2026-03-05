@@ -18,6 +18,10 @@ export function DrillScreen({ session }: Props) {
     if (session.mode !== 'drill') return
 
     const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        return
+      }
       // key.length === 1 のアルファベット・記号のみ処理
       if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault()
@@ -102,6 +106,7 @@ export function DrillScreen({ session }: Props) {
       <div className="text-center">
         <button
           className="bg-transparent border-0 text-text-secondary text-xs cursor-pointer px-2 py-1 hover:text-accent hover:bg-transparent"
+          tabIndex={-1}
           onClick={() => setHintVisible(v => !v)}
         >
           {hintVisible ? 'ヒントを隠す' : 'ヒントを表示'}

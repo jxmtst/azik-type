@@ -22,6 +22,10 @@ export function SentenceScreen({ session }: Props) {
     if (session.mode !== 'sentence') return
 
     const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        return
+      }
       if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault()
         session.handleKey(e.key)
@@ -71,6 +75,7 @@ export function SentenceScreen({ session }: Props) {
       <div className="text-center">
         <button
           className="bg-transparent border-0 text-text-secondary text-xs cursor-pointer px-2 py-1 hover:text-accent hover:bg-transparent"
+          tabIndex={-1}
           onClick={() => setHintVisible(v => !v)}
         >
           {hintVisible ? 'ヒントを隠す' : 'ヒントを表示'}
