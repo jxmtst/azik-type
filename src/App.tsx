@@ -7,11 +7,11 @@ import { AzikReferenceScreen } from './components/screens/AzikReferenceScreen'
 import { SessionResult } from './components/ui/SessionResult'
 
 type Screen = 'drill' | 'sentence' | 'reference'
-const screens: Screen[] = ['drill', 'sentence', 'reference']
+const screens: Screen[] = ['sentence', 'drill', 'reference']
 
 function App() {
   const session = useTypingSession()
-  const [screen, setScreen] = useState<Screen>('drill')
+  const [screen, setScreen] = useState<Screen>('sentence')
 
   // ESCキーで戻る（idle以外のとき）
   useEffect(() => {

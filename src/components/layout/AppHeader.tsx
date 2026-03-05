@@ -6,8 +6,8 @@ type Props = {
 }
 
 const NAV_ITEMS: { screen: Screen; label: string }[] = [
-  { screen: 'drill', label: 'ドリル' },
   { screen: 'sentence', label: '文章' },
+  { screen: 'drill', label: 'ドリル' },
   { screen: 'reference', label: 'キーマップ' },
 ]
 
