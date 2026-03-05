@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# AZIK Type
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AZIK配列に特化したタイピング練習アプリ。
 
-Currently, two official plugins are available:
+<img width="1865" height="362" alt="文章タイピング" src="https://github.com/user-attachments/assets/bf5460d1-1981-4361-a23d-55eba9bf96eb" />
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<img width="1864" height="308" alt="ドリル" src="https://github.com/user-attachments/assets/159b9efe-27eb-49d9-b329-977c9b370049" />
 
-## React Compiler
+<img width="2062" height="883" alt="キーマップ" src="https://github.com/user-attachments/assets/7800b52c-ed11-4a31-b109-ffe26082a009" />
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## AZIKとは
 
-## Expanding the ESLint configuration
+AZIK（エイズィック）は、木村清氏が1994年に提案した拡張ローマ字入力方式。標準のローマ字入力と互換性を保ちながら、頻出する日本語の音（二重母音・撥音など）を少ない打鍵で入力できるようにローマ字テーブルを拡張している。シミュレーションでは通常のローマ字入力に比べて約12%の打鍵削減が確認されている。
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+> 学習の移行性を重視した拡張ローマ字入力 : AZIK
+> ― 木村 清（1994）
+> [CiNii Research](https://cir.nii.ac.jp/crid/1571135652062676864)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+特徴:
+- キーボード配列を変更しないため、標準ローマ字入力からの移行コストが低い
+- `q` → 「ん」、`;` → 「っ」のように、使用頻度の低いキーに頻出音を割り当て
+- 二重母音（ai, uu, ei, ou）や撥音（an, in, un, en, on）を子音キー1打で入力可能
+- 標準ローマ字入力との併用が可能（`;` → 「っ」のルール以外は干渉しない）
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+参考: [AZIK総合解説書](https://note.com/actbemu/n/n74f1c04c9a2e)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## About
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+AZIK配列の習得を目的としたタイピング練習アプリ。3つのモードで段階的に練習できる。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **文章モード** - 日本語の文章をAZIK配列でタイピング。AZIK拡張ショートカット文字はゴールドでハイライト表示される
+- **ドリルモード** - カテゴリ別にAZIKの入力パターンを反復練習
+- **キーマップモード** - AZIK配列のキー配置を確認
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Usage
+
+### 操作方法
+
+| 操作 | 説明 |
+|------|------|
+| 文章モード | 開くと自動開始。制限時間内にタイピング |
+| ドリルモード | カテゴリ選択後、`Space` で開始 |
+| `Shift+Tab` | モード切替 |
+| `ESC` | リセット |
+
+### AZIKショートカットの例
+
+| キー | 入力 |
+|------|------|
+| `q` | ん |
+| `;` | っ（促音） |
+| `kb` | きん |
+| `ds` | です |
+
+## Development
+
+```bash
+npm install
+npm run dev
+npm run build
+npm test
 ```
