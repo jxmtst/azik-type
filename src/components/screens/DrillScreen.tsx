@@ -99,8 +99,8 @@ export function DrillScreen({ session }: Props) {
         mode="drill"
       />
 
-      {session.currentEntry && (
-        <KeyHint kana={session.currentEntry.kana} visible={hintVisible} />
+      {session.currentEntry && hintVisible && (
+        <KeyHint kana={session.currentEntry.kana} />
       )}
 
       <div className="text-center">

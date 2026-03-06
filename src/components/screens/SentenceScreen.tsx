@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import type { TypingSessionState } from '../../hooks/useTypingSession'
 import { TypingDisplay } from '../ui/TypingDisplay'
 import { KeyHint } from '../ui/KeyHint'
@@ -8,7 +8,6 @@ type Props = {
 }
 
 export function SentenceScreen({ session }: Props) {
-  const [hintVisible, setHintVisible] = useState(true)
 
   // 自動開始
   useEffect(() => {
@@ -69,18 +68,8 @@ export function SentenceScreen({ session }: Props) {
       />
 
       {session.currentDag && (
-        <KeyHint dag={session.currentDag} visible={hintVisible} />
+        <KeyHint dag={session.currentDag} matcherState={session.matcherState} />
       )}
-
-      <div className="text-center">
-        <button
-          className="bg-transparent border-0 text-text-secondary text-xs cursor-pointer px-2 py-1 hover:text-accent hover:bg-transparent"
-          tabIndex={-1}
-          onClick={() => setHintVisible(v => !v)}
-        >
-          {hintVisible ? 'ヒントを隠す' : 'ヒントを表示'}
-        </button>
-      </div>
     </div>
   )
 }

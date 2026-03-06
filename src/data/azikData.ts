@@ -600,3 +600,12 @@ export function getShortestRomaji(kana: string): string[] {
   const minLen = Math.min(...entries.map(e => e.romaji.length))
   return entries.filter(e => e.romaji.length === minLen).map(e => e.romaji)
 }
+
+/** HINT表示用: 最短のromajiの中からAZIKショートカットを優先して1つ返す（データ末尾のエントリを優先） */
+export function getPreferredRomaji(kana: string): string {
+  const entries = KANA_TO_ENTRIES.get(kana)
+  if (!entries || entries.length === 0) return ''
+  const minLen = Math.min(...entries.map(e => e.romaji.length))
+  const shortest = entries.filter(e => e.romaji.length === minLen)
+  return shortest[shortest.length - 1].romaji
+}

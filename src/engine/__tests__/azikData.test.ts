@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { AZIK_ENTRIES, KANA_TO_ENTRIES, ROMAJI_TO_KANA, getShortestRomaji } from '../../data/azikData'
+import { AZIK_ENTRIES, KANA_TO_ENTRIES, ROMAJI_TO_KANA, getShortestRomaji, getPreferredRomaji } from '../../data/azikData'
 
 describe('azikData', () => {
   it('エントリが存在する', () => {
@@ -47,5 +47,39 @@ describe('azikData', () => {
 
   it('getShortestRomajiは存在しないかなで空配列', () => {
     expect(getShortestRomaji('★')).toEqual([])
+  })
+})
+
+describe('getPreferredRomaji', () => {
+  it('同じ長さならAZIKショートカットを優先する', () => {
+    // き: ki(basic) vs kf(double_vowel) → kf
+    expect(getPreferredRomaji('き')).toBe('kf')
+  })
+
+  it('ふ=hf, む=mf, ぬ=nf を優先', () => {
+    expect(getPreferredRomaji('ふ')).toBe('hf')
+    expect(getPreferredRomaji('む')).toBe('mf')
+    expect(getPreferredRomaji('ぬ')).toBe('nf')
+  })
+
+  it('みゃ=mga, みゅ=mgu, みょ=mgo を優先', () => {
+    expect(getPreferredRomaji('みゃ')).toBe('mga')
+    expect(getPreferredRomaji('みゅ')).toBe('mgu')
+    expect(getPreferredRomaji('みょ')).toBe('mgo')
+  })
+
+  it('ざい=zv, せい=ss, さい=sf, わい=wf（長さが短い方が選ばれる）', () => {
+    expect(getPreferredRomaji('ざい')).toBe('zv')
+    expect(getPreferredRomaji('せい')).toBe('ss')
+    expect(getPreferredRomaji('さい')).toBe('sf')
+    expect(getPreferredRomaji('わい')).toBe('wf')
+  })
+
+  it('ショートカットがない場合は最短のbasicを返す', () => {
+    expect(getPreferredRomaji('か')).toBe('ka')
+  })
+
+  it('存在しないかなは空文字列', () => {
+    expect(getPreferredRomaji('★')).toBe('')
   })
 })
