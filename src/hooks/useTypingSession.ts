@@ -132,7 +132,7 @@ export function useTypingSession(): TypingSessionState {
   }, [])
 
   const startSentence = useCallback(() => {
-    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 60 })
     sentenceSessionRef.current = session
     drillSessionRef.current = null
     startTimeRef.current = null

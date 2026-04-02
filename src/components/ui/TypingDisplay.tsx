@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { InputDag, MatcherState, MatchResult } from '../../engine/types'
 import { KANA_TO_ENTRIES } from '../../data/azikData'
+import { buildShortestHintParts } from '../../engine/hintBuilder'
 
 type Props = {
   targetKana: string
@@ -28,6 +29,20 @@ function computeCompletedChars(matcherState: MatcherState | null, dag: InputDag 
     }
   }
   return maxNodeId
+}
+
+/**
+ * DAGの最短経路上で、各ノードに対応するエッジの終端をマップとして返す。
+ * HINTと同じ最短経路を使うことで、下線範囲が一致する。
+ */
+function computeEdgeEndMap(dag: InputDag | null): Map<number, number> {
+  const map = new Map<number, number>()
+  if (!dag) return map
+  const parts = buildShortestHintParts(dag)
+  for (const part of parts) {
+    map.set(part.fromNode, part.toNode)
+  }
+  return map
 }
 
 /**
@@ -92,6 +107,15 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
     [matcherState, dag],
   )
 
+  const edgeEndMap = useMemo(
+    () => computeEdgeEndMap(dag),
+    [dag],
+  )
+
+  const currentEdgeEnd = useMemo(() => {
+    return edgeEndMap.get(completedChars) ?? completedChars + 1
+  }, [edgeEndMap, completedChars])
+
   const currentRomaji = useMemo(
     () => computeCurrentRomaji(matcherState, dag),
     [matcherState, dag],
@@ -125,7 +149,7 @@ export function TypingDisplay({ targetKana, matcherState, dag, lastResult, mode 
           let cls = 'text-text-primary'
           if (i < completedChars) {
             cls = 'text-success'
-          } else if (i === completedChars) {
+          } else if (i >= completedChars && i < currentEdgeEnd) {
             const base = extensionChars.has(i) ? 'text-azik-extension' : ''
             cls = `${base} underline underline-offset-4 decoration-accent`
           } else if (extensionChars.has(i)) {

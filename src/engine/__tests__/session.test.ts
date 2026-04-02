@@ -34,19 +34,19 @@ describe('DrillSession', () => {
 
 describe('SentenceSession', () => {
   it('文章セッションを作成できる', () => {
-    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
-    expect(session.timeLimitMs).toBe(120000)
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 60 })
+    expect(session.timeLimitMs).toBe(60000)
   })
 
-  it('デフォルトの制限時間は120秒（設計仕様）', () => {
-    // useTypingSession.tsでの呼び出し値が設計書通り120秒であることを確認するため、
+  it('デフォルトの制限時間は60秒（設計仕様）', () => {
+    // useTypingSession.tsでの呼び出し値が設計書通り60秒であることを確認するため、
     // ここではsession.tsの変換が正しいことだけ検証
-    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
-    expect(session.timeLimitMs).toBe(120 * 1000)
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 60 })
+    expect(session.timeLimitMs).toBe(60 * 1000)
   })
 
   it('getNextQuestionで文章とDAGを取得できる', () => {
-    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 60 })
     const q = getNextQuestion(session)
     expect(q).toBeDefined()
     expect(q!.text.length).toBeGreaterThan(0)
@@ -54,7 +54,7 @@ describe('SentenceSession', () => {
   })
 
   it('一巡後も再シャッフルして問題を返し続ける', () => {
-    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 120 })
+    const session = createSentenceSession({ mode: 'sentence', timeLimitSec: 60 })
     const total = session.shuffled.length
     // 一巡分取得
     for (let i = 0; i < total; i++) {

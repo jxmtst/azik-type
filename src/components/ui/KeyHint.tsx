@@ -28,16 +28,15 @@ export function KeyHint(props: Props) {
   if (!parts && !simpleHint) return null
 
   return (
-    <div className="my-4 px-4 py-3 bg-bg-secondary border border-border rounded-md font-mono text-sm text-text-secondary text-center">
-      <span className="text-text-secondary mr-2">HINT:</span>
+    <div className="my-4 font-mono text-lg text-text-secondary text-center">
       {parts ? (
-        <span className="inline-block px-2 py-0.5 mx-1 bg-bg-tertiary border border-border rounded">
+        <span>
           {parts.map((part, i) => {
             let className: string
             if (part.toNode <= currentNode) {
               className = 'text-success'
             } else if (part.fromNode <= currentNode && part.toNode > currentNode) {
-              className = 'text-accent underline'
+              className = 'text-accent'
             } else {
               className = 'text-text-secondary'
             }
@@ -45,7 +44,7 @@ export function KeyHint(props: Props) {
           })}
         </span>
       ) : (
-        <span className="inline-block px-2 py-0.5 mx-1 bg-bg-tertiary border border-border rounded text-accent">{simpleHint}</span>
+        <span className="text-accent">{simpleHint}</span>
       )}
     </div>
   )
