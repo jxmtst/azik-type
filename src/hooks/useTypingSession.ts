@@ -21,6 +21,8 @@ export type TypingSessionState = {
   questionIndex: number
   totalQuestions: number
   currentEntry: AzikEntry | null
+  drillCategories: Category[] | null
+  drillQuestionCount: number | null
 
   // メトリクス
   metrics: SessionMetrics
@@ -66,6 +68,8 @@ export function useTypingSession(): TypingSessionState {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [totalQuestions, setTotalQuestions] = useState(0)
   const [currentEntry, setCurrentEntry] = useState<AzikEntry | null>(null)
+  const [drillCategories, setDrillCategories] = useState<Category[] | null>(null)
+  const [drillQuestionCount, setDrillQuestionCount] = useState<number | null>(null)
   const [metrics, setMetrics] = useState<SessionMetrics>({ totalKeystrokes: 0, missCount: 0, elapsedMs: 0 })
   const [remainingMs, setRemainingMs] = useState(0)
   const [lastResult, setLastResult] = useState<MatchResult | null>(null)
@@ -126,6 +130,8 @@ export function useTypingSession(): TypingSessionState {
     setQuestionIndex(0)
     setTotalQuestions(session.questions.length)
     setCurrentEntry(first.entry)
+    setDrillCategories(categories)
+    setDrillQuestionCount(questionCount)
     setMetrics({ totalKeystrokes: 0, missCount: 0, elapsedMs: 0 })
     setRemainingMs(0)
     setLastResult(null)
@@ -243,6 +249,8 @@ export function useTypingSession(): TypingSessionState {
     setQuestionIndex(0)
     setTotalQuestions(0)
     setCurrentEntry(null)
+    setDrillCategories(null)
+    setDrillQuestionCount(null)
     setMetrics({ totalKeystrokes: 0, missCount: 0, elapsedMs: 0 })
     setRemainingMs(0)
     setLastResult(null)
@@ -264,6 +272,8 @@ export function useTypingSession(): TypingSessionState {
     questionIndex,
     totalQuestions,
     currentEntry,
+    drillCategories,
+    drillQuestionCount,
     metrics,
     kpm,
     accuracy,

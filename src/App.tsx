@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTypingSession } from './hooks/useTypingSession'
 import { AppHeader } from './components/layout/AppHeader'
 import { DrillScreen } from './components/screens/DrillScreen'
 import { SentenceScreen } from './components/screens/SentenceScreen'
 import { AzikReferenceScreen } from './components/screens/AzikReferenceScreen'
 import { SessionResult } from './components/ui/SessionResult'
+import { saveScore } from './engine/scoreStorage'
+import type { ScoreRecord } from './engine/types'
 
 type Screen = 'drill' | 'sentence' | 'reference'
 const screens: Screen[] = ['sentence', 'drill', 'reference']
@@ -49,6 +51,33 @@ function App() {
     session.reset()
     setScreen(next)
   }
+
+  // スコア保存
+  const savedRef = useRef(false)
+  useEffect(() => {
+    if (session.mode === 'result' && session.metrics.totalKeystrokes > 0 && !savedRef.current) {
+      savedRef.current = true
+      const record: ScoreRecord = {
+        id: crypto.randomUUID(),
+        date: new Date().toISOString(),
+        mode: screen === 'drill' ? 'drill' : 'sentence',
+        kpm: session.kpm,
+        accuracy: session.accuracy ?? 0,
+        effectiveKpm: session.effectiveKpm ?? 0,
+        totalKeystrokes: session.metrics.totalKeystrokes,
+        missCount: session.metrics.missCount,
+        elapsedMs: session.metrics.elapsedMs,
+        ...(screen === 'drill' ? {
+          categories: session.drillCategories ?? [],
+          questionCount: session.drillQuestionCount ?? 0,
+        } : {}),
+      }
+      saveScore(record)
+    }
+    if (session.mode !== 'result') {
+      savedRef.current = false
+    }
+  }, [session.mode])
 
   // session.mode === 'result' のとき結果画面を表示
   if (session.mode === 'result') {

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import type { SessionMetrics } from '../../engine/types'
+import { ScoreHistory } from './ScoreHistory'
 
 type Props = {
   metrics: SessionMetrics
@@ -53,6 +54,7 @@ export function SessionResult({ metrics, kpm, accuracy, effectiveKpm, onRestart 
           もう一度
         </button>
       </div>
+      <ScoreHistory />
     </div>
   )
 }

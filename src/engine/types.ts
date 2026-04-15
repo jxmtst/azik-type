@@ -68,3 +68,17 @@ export type SessionMetrics = {
   missCount: number
   elapsedMs: number
 }
+
+export type ScoreRecord = {
+  id: string
+  date: string
+  mode: SessionMode
+  kpm: number
+  accuracy: number
+  effectiveKpm: number
+  totalKeystrokes: number
+  missCount: number
+  elapsedMs: number
+  categories?: Category[]
+  questionCount?: number
+}
