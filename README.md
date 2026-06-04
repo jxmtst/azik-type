@@ -52,11 +52,9 @@ AZIK配列の習得を目的としたタイピング練習アプリ。3つのモ
 | `kb` | きん |
 | `ds` | です |
 
-## Development
+## How to use
 
 ```bash
 npm install
 npm run dev
-npm run build
-npm test
 ```
